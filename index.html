@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouGame Combat — PvP клиент для Minecraft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e8e8f0;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('fon.jfif') center/cover no-repeat fixed;opacity:.2;z-index:-1;pointer-events:none}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,10,15,0.75);z-index:-1;pointer-events:none}
+
+.splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s;opacity:1}
+.splash.hide{opacity:0;pointer-events:none}
+.splash-logo{width:100px;height:100px;margin-bottom:20px;border-radius:20px}
+.splash h1{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,#fff,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.splash p{color:#6b6b80;font-size:1rem}
+.splash .splash-sub{color:#4a4a5e;font-size:.85rem;margin-top:16px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:1.1rem}
+.nav-logo img{width:32px;height:32px;border-radius:8px}
+.nav-links{display:flex;gap:6px;font-size:.85rem;font-weight:500;color:#9494a8}
+.nav-links a{padding:6px 14px;border-radius:8px;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.05)}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:50px;font-weight:600;font-size:.82rem;transition:all .3s;border:none;cursor:pointer;font-family:inherit;text-decoration:none}
+.nav-btn-dl{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 2px 12px rgba(99,102,241,0.25)}
+.nav-btn-dl:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(99,102,241,0.4)}
+.nav-btn-support{background:rgba(255,255,255,0.06);color:#c0c0d0;border:1px solid rgba(255,255,255,0.06)}
+.nav-btn-support:hover{background:rgba(255,255,255,0.1);color:#fff}
+.nav-btn-settings{background:none;border:none;color:#6b6b80;font-size:1.2rem;cursor:pointer;padding:6px;border-radius:8px;transition:all .2s;display:flex;align-items:center}
+.nav-btn-settings:hover{color:#fff;background:rgba(255,255,255,0.05)}
+
+section{position:relative;z-index:1}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px}
+.hero-content{max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.12);color:#818cf8;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:600;margin-bottom:20px;border:1px solid rgba(99,102,241,0.15)}
+.hero h1{font-size:4rem;font-weight:900;line-height:1.1;margin-bottom:14px;background:linear-gradient(135deg,#fff 30%,#818cf8 70%,#c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.1rem;color:#8888a0;line-height:1.7;max-width:560px;margin:0 auto 28px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+.btn{display:inline-flex;align-items:center;gap:12px;padding:12px 24px;border-radius:50px;font-weight:700;font-size:.9rem;transition:all .3s;border:none;cursor:pointer;font-family:inherit;text-decoration:none}
+.btn .btn-circle{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;transition:all .3s}
+.btn-hero-dl{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:14px 28px;font-size:1rem;box-shadow:0 4px 24px rgba(99,102,241,0.3)}
+.btn-hero-dl .btn-circle{background:rgba(255,255,255,0.2);color:#fff;font-size:1.1rem}
+.btn-hero-dl:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(99,102,241,0.45)}
+.btn-hero-sec{background:rgba(255,255,255,0.04);color:#c0c0d0;border:1px solid rgba(255,255,255,0.07)}
+.btn-hero-sec .btn-circle{background:rgba(255,255,255,0.06);color:#aaa}
+.btn-hero-sec:hover{background:rgba(255,255,255,0.08);color:#fff;transform:translateY(-2px)}
+
+.btn-dl{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:14px 28px;font-size:.95rem;box-shadow:0 4px 20px rgba(99,102,241,0.25)}
+.btn-dl .btn-circle{background:rgba(255,255,255,0.2);color:#fff;font-size:1.1rem;width:42px;height:42px}
+.btn-dl:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(99,102,241,0.4)}
+.btn-support-pink{background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(236,72,153,0.05));color:#f472b6;border:1px solid rgba(236,72,153,0.12);padding:12px 28px}
+.btn-support-pink .btn-circle{background:rgba(236,72,153,0.15);color:#f472b6}
+.btn-support-pink:hover{background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(236,72,153,0.1));transform:translateY(-2px);box-shadow:0 8px 24px rgba(236,72,153,0.15)}
+
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:48px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-value{font-size:1.6rem;font-weight:800;color:#fff}
+.hero-stat-label{font-size:.78rem;color:#6b6b80;margin-top:4px}
+
+.features{padding:100px 24px}
+.features-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:.75rem;font-weight:600;color:#818cf8;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:6px;text-align:center}
+.section-title{font-size:2.2rem;font-weight:800;text-align:center;margin-bottom:40px;line-height:1.2}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.feature-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:24px;transition:all .3s}
+.feature-card:hover{background:rgba(99,102,241,0.06);border-color:rgba(99,102,241,0.15);transform:translateY(-3px)}
+.feature-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#818cf8;margin-bottom:14px}
+.feature-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.feature-card p{font-size:.84rem;color:#6b6b80;line-height:1.6}
+
+.info{padding:100px 24px}
+.info-inner{max-width:900px;margin:0 auto}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px}
+.info-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:24px;text-align:center;transition:all .3s}
+.info-card:hover{background:rgba(99,102,241,0.04);border-color:rgba(99,102,241,0.12);transform:translateY(-3px)}
+.info-card-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin:0 auto 12px}
+.info-card-icon.purple{background:rgba(99,102,241,0.12);color:#818cf8}
+.info-card-icon.green{background:rgba(16,185,129,0.12);color:#34d399}
+.info-card-icon.blue{background:rgba(56,189,248,0.12);color:#38bdf8}
+.info-card-icon.amber{background:rgba(251,191,36,0.12);color:#fbbf24}
+.info-card h4{font-size:.95rem;font-weight:700;margin-bottom:4px}
+.info-card p{font-size:.82rem;color:#6b6b80;line-height:1.5}
+.info-cta{text-align:center;margin-top:8px}
+
+.support{padding:100px 24px}
+.support-inner{max-width:800px;margin:0 auto;text-align:center}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin:36px 0}
+.faq-item{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:18px 20px;transition:all .2s}
+.faq-item:hover{background:rgba(255,255,255,0.04);border-color:rgba(99,102,241,0.1)}
+.faq-item h4{font-size:.88rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.faq-item h4 i{color:#818cf8;font-size:.75rem}
+.faq-item p{font-size:.8rem;color:#6b6b80;line-height:1.5}
+
+.video-section{padding:80px 24px 120px}
+.video-inner{max-width:800px;margin:0 auto;text-align:center}
+.video-wrapper{position:relative;width:100%;padding-bottom:56.25%;border-radius:16px;overflow:hidden;background:#000;margin-top:28px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+.video-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%}
+
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:rgba(15,15,30,0.95);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:28px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.5);max-height:90vh;overflow-y:auto}
+.modal h2{font-size:1.2rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.modal h2 i{color:#818cf8}
+.modal .modal-desc{color:#6b6b80;font-size:.82rem;margin-bottom:20px}
+.modal label{font-size:.82rem;color:#9494a8;font-weight:600;display:block;margin-bottom:6px}
+.modal input[type=text]{width:100%;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);color:#e8e8f0;font-size:.85rem;font-family:inherit;outline:none;transition:border .2s}
+.modal input[type=text]:focus{border-color:#6366f1}
+.modal-divider{border:none;border-top:1px solid rgba(255,255,255,0.04);margin:20px 0}
+.modal-actions{display:flex;gap:10px;margin-top:16px}
+.modal-actions button{flex:1;padding:10px;border-radius:10px;border:none;font-weight:600;font-size:.85rem;cursor:pointer;font-family:inherit;transition:all .2s}
+.modal-save{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+.modal-save:hover{box-shadow:0 4px 20px rgba(99,102,241,0.3)}
+.modal-close-btn{background:rgba(255,255,255,0.04);color:#9494a8}
+.modal-close-btn:hover{background:rgba(255,255,255,0.08)}
+
+.music-section{margin-top:4px}
+.music-section h3{font-size:.9rem;font-weight:600;color:#c0c0d0;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.music-section h3 i{color:#818cf8}
+.mp-list{display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;margin-bottom:10px}
+.mp-list::-webkit-scrollbar{width:4px}
+.mp-list::-webkit-scrollbar-track{background:transparent}
+.mp-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+.mp-track{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.82rem;color:#6b6b80;background:transparent;border:none;font-family:inherit;text-align:left;width:100%}
+.mp-track:hover{background:rgba(255,255,255,0.04);color:#c0c0d0}
+.mp-track.active{background:rgba(99,102,241,0.08);color:#818cf8}
+.mp-track .mp-track-num{width:20px;font-size:.75rem;color:#4a4a5e;flex-shrink:0}
+.mp-track.active .mp-track-num{color:#818cf8}
+.mp-track .mp-track-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-track .mp-track-icon{color:#4a4a5e;font-size:.7rem;flex-shrink:0}
+.mp-track.active .mp-track-icon{color:#818cf8}
+.mp-controls-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.mp-btn{background:rgba(255,255,255,0.04);border:none;color:#6b6b80;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.8rem;flex-shrink:0}
+.mp-btn:hover{background:rgba(99,102,241,0.12);color:#818cf8}
+.mp-btn.play-btn-m{background:rgba(99,102,241,0.1);color:#818cf8;width:34px;height:34px;font-size:.9rem}
+.mp-btn.play-btn-m:hover{background:rgba(99,102,241,0.18)}
+.mp-progress{flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;cursor:pointer;position:relative}
+.mp-progress-bar{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:2px;width:0%}
+.mp-now{font-size:.75rem;color:#4a4a5e;margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+footer{text-align:center;padding:28px 24px;font-size:.8rem;color:#4a4a5e;border-top:1px solid rgba(255,255,255,0.03)}
+footer a{color:#6366f1;text-decoration:none}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-actions{gap:4px}
+  .nav-btn{padding:6px 12px;font-size:.75rem}
+  .hero h1{font-size:2.2rem}
+  .hero p{font-size:.95rem}
+  .hero-stats{gap:20px}
+  .section-title{font-size:1.5rem}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .info-grid{grid-template-columns:1fr}
+  .faq-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="splash" id="splash">
+  <img src="yougame.png" class="splash-logo" alt="YouGame">
+  <h1>YouGame Combat</h1>
+  <p id="splashGreeting"></p>
+  <p class="splash-sub" id="splashSub">Загрузка...</p>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <img src="yougame.png" alt="YouGame"> YouGame
+    </div>
+    <div class="nav-links">
+      <a href="#features">Возможности</a>
+      <a href="#info">О клиенте</a>
+      <a href="#support">Поддержка</a>
+      <a href="#video">Видео</a>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn-settings" onclick="openSettings()" title="Настройки"><i class="fas fa-user-gear"></i></button>
+      <a href="#info" class="nav-btn nav-btn-dl"><i class="fas fa-download"></i> Скачать</a>
+      <a href="https://discord.gg/yougame" target="_blank" class="nav-btn nav-btn-support"><i class="fab fa-discord"></i></a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><i class="fas fa-bolt"></i> Yougame client 1.16 - 1.21</div>
+    <h1>YouGame Combat</h1>
+    <p>Лучший PvP-клиент для Minecraft. Максимальный FPS, минимальный пинг, идеальные анимации.</p>
+    <div class="hero-btns">
+      <a href="#info" class="btn btn-hero-dl"><span class="btn-circle"><i class="fas fa-download"></i></span> Скачать бесплатно</a>
+      <a href="#features" class="btn btn-hero-sec"><span class="btn-circle"><i class="fas fa-info-circle"></i></span> Подробнее</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value">12 000+</div>
+        <div class="hero-stat-label">Загрузок</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">5</div>
+        <div class="hero-stat-label">Рейтинг</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">1.16 — 1.21</div>
+        <div class="hero-stat-label">Поддержка версий</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-label">Возможности</div>
+    <h2 class="section-title">Всё для победы в одном клиенте</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-gauge-high"></i></div>
+        <h3>Оптимизация FPS</h3>
+        <p>До 300% прироста FPS на слабых ПК. Встроенный рендер-движок без лагов и просадок.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-shield"></i></div>
+        <h3>Анти-чит защита</h3>
+        <p>Обход самых популярных анти-читов. Невидимый для NCP, AAC, Vulcan и других.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+        <h3>Visuals</h3>
+        <p>Каждая работа выполнена с вниманием к деталям, качественной обработкой и продуманной композицией. Эти визуалы не только выглядят эффектно, но и создают особую атмосферу, благодаря чему заслуженно выделяются среди остальных участников..</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-crosshairs"></i></div>
+        <h3>Combat</h3>
+        <p>Он выделяется высокой точностью, стабильной работой и уверенной эффективностью, благодаря чему заслуженно считается одной из самых сильных в своём классе. Именно сочетание производительности, надежности и качества делает её выбором для тех, кто ценит максимальный результат.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-cubes"></i></div>
+        <h3>PVE</h3>
+        <p>Лучшие PvE-функции для комфортного и эффективного фарма. Они помогают автоматизировать рутинные действия, экономят время и делают игровой процесс значительно удобнее. Благодаря продуманному набору возможностей фарм становится быстрее, стабильнее и позволяет сосредоточиться на достижении своих целей.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-sliders"></i></div>
+        <h3>Гибкие настройки</h3>
+        <p>Каждый модуль настраивается отдельно. GUI-редактор без редактирования конфигов.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-ruler"></i></div>
+        <h3>Скрытность</h3>
+        <p>Лучшая скрытность. Функции, направленные на повышение конфиденциальности, включая возможность скрытия никнейма, помогают сделать использование сервиса менее заметным. При этом ни одна система не может гарантировать полную защиту или отсутствие санкций, поскольку это зависит от правил и механизмов конкретной игры.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-eye"></i></div>
+        <h3>Удобное меню</h3>
+        <p>Удобное и современное меню с продуманным интерфейсом, которое позволяет быстро находить нужные функции и настраивать их под свои предпочтения. Информативный HUD отображает всю важную информацию прямо во время игры, оставаясь при этом компактным, понятным и не перегружая экран.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="info" id="info">
+  <div class="info-inner">
+    <div class="section-label">Информация</div>
+    <h2 class="section-title">О клиенте YouGame Combat</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-icon purple"><i class="fas fa-cube"></i></div>
+        <h4>Версия 0.0.1</h4>
+        <p>47 MB • ZIP • Поддержка 1.16 — 1.21</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon green"><i class="fas fa-microchip"></i></div>
+        <h4>Системные требования</h4>
+        <p>Windows 10/11 • 2 GB RAM • SSE2</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon blue"><i class="fas fa-shield-halved"></i></div>
+        <h4>Безопасность</h4>
+        <p>Проверен 50+ антивирусами. Без майнеров.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon amber"><i class="fas fa-rotate"></i></div>
+        <h4>Автообновления</h4>
+        <p>Клиент обновляется каждый день, ждать долго новые обходы не прийдётся!.</p>
+      </div>
+    </div>
+    <div class="info-cta">
+      <button class="btn btn-dl" onclick="downloadClient()">
+        <span class="btn-circle"><i class="fas fa-download"></i></span> Скачать YouGame Combat 2.4.1
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="support" id="support">
+  <div class="support-inner">
+    <div class="section-label">Поддержка</div>
+    <h2 class="section-title">Часто задаваемые вопросы</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4><i class="fas fa-question-circle"></i> Это бесплатно?</h4>
+        <p>Да, клиент полностью бесплатный. Без скрытых платежей и подписок.</p>
+      </div>
+      <div class="faq-item">
+        <h4><i class="fas fa-question-circle"></i> Меня забанят?</h4>
+        <p>Клиент использует продвинутый обход анти-читов. Риск бана минимален.</p>
+      </div>
+      <div class="faq-item">
+        <h4><i class="fas fa-question-circle"></i> Как установить?</h4>
+        <p>Скачай ZIP, распакуй в папку versions, поставь версию и готово!</p>
+      </div>
+      <div class="faq-item">
+        <h4><i class="fas fa-question-circle"></i> Есть вирусы?</h4>
+        <p>Нет. Клиент проверен 50+ антивирусами. Ссылка на VirusReport в Discord.</p>
+      </div>
+      <div class="faq-item">
+        <h4><i class="fas fa-question-circle"></i> На каких версиях работает?</h4>
+        <p>Поддерживаются все версии от 1.16 до 1.21 включительно.</p>
+      </div>
+      <div class="faq-item">
+        <h4><i class="fas fa-question-circle"></i> Не работает. Что делать?</h4>
+        <p>Напиши в поддержку — ответим в течение 5 минут. Кнопка ниже.</p>
+      </div>
+    </div>
+    <a href="https://discord.gg/yougame" target="_blank" class="btn btn-support-pink">
+      <span class="btn-circle"><i class="fab fa-discord"></i></span> Перейти в поддержку
+    </a>
+  </div>
+</section>
+
+<section class="video-section" id="video">
+  <div class="video-inner">
+    <div class="section-label">Видео</div>
+    <h2 class="section-title">Обзор YouGame Combat</h2>
+    <p style="color:#6b6b80;margin-bottom:0;font-size:.9rem">Смотри, как работает клиент в реальном PvP</p>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2><i class="fas fa-user-gear"></i> Настройки</h2>
+    <p class="modal-desc">Укажи свой никнейм для приветствия на сайте</p>
+    <label>Твой никнейм</label>
+    <input type="text" id="nicknameInput" placeholder="Введите ник" maxlength="20">
+    <div class="modal-actions">
+      <button class="modal-close-btn" onclick="closeSettings()">Отмена</button>
+      <button class="modal-save" onclick="saveSettings()">Сохранить</button>
+    </div>
+
+    <hr class="modal-divider">
+
+    <div class="music-section">
+      <h3><i class="fas fa-headphones"></i> Музыка</h3>
+      <div class="mp-list" id="mpList"></div>
+      <div class="mp-controls-row">
+        <button class="mp-btn" onclick="prevTrack()"><i class="fas fa-backward-step"></i></button>
+        <button class="mp-btn play-btn-m" id="mpPlayBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+        <button class="mp-btn" onclick="nextTrack()"><i class="fas fa-forward-step"></i></button>
+        <div class="mp-progress" onclick="setProgress(event)">
+          <div class="mp-progress-bar" id="mpProgressBar"></div>
+        </div>
+      </div>
+      <div class="mp-now" id="mpNow">—</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  YouGame © 2024 — PvP клиент для Minecraft. Не связан с Mojang AB. | <a href="https://discord.gg/yougame">Discord</a>
+</footer>
+
+<audio id="audioPlayer" style="display:none"></audio>
+
+<script>
+const tracks = [
+  "Emoslut666 Шоколад (Feat. Pinkcrush).mp3",
+  "Ivycraft - Люблю Москву но сниться Лондон.mp3",
+  "kurokov, fallen777angel - бывает больно 2.0 [muzce.com].mp3",
+  "madk1d & VILLIAN - 8 миля.mp3",
+  "NEWLIGHTCHILD - Сейчас.mp3",
+  "Rainmerge, Nison B - Летаем.mp3",
+  "Scally Milano & 163ONMYNECK & MAYOT - Йупи Йо.mp3",
+  "Scally Milano & uglystephan - Дай Мне Шанс.mp3",
+  "Scally Milano & uglystephan - Туда Сюда Миллионер.mp3",
+  "Sil-a & YUNG TRAPPA - Молодые боссы.mp3",
+  "tuborosho - Клубняк2010 [muzce.com].mp3",
+  "Whole Lotta Swag - Обнял, поцеловал.mp3",
+  "Yung_Trappa_Ejo_ya_lyublyu_dengi_shlyuh_i_narkotu.mp3"
+];
+
+let currentTrack = -1;
+let isPlaying = false;
+const audio = document.getElementById('audioPlayer');
+const mpList = document.getElementById('mpList');
+
+function buildTrackList(){
+  mpList.innerHTML = tracks.map((t,i) => `
+    <button class="mp-track${i===currentTrack?' active':''}" onclick="selectTrack(${i})">
+      <span class="mp-track-num">${i+1}</span>
+      <span class="mp-track-name">${t.replace(/\.mp3$/,'')}</span>
+      <span class="mp-track-icon"><i class="fas fa-play"></i></span>
+    </button>
+  `).join('');
+}
+
+function selectTrack(idx){
+  currentTrack = idx;
+  audio.src = 'music/' + encodeURI(tracks[currentTrack]);
+  audio.play();
+  isPlaying = true;
+  document.getElementById('mpPlayBtn').innerHTML='<i class="fas fa-pause"></i>';
+  document.getElementById('mpNow').textContent = tracks[currentTrack].replace(/\.mp3$/,'');
+  buildTrackList();
+}
+
+function togglePlay(){
+  if(currentTrack<0){if(tracks.length)selectTrack(0);return}
+  if(isPlaying){audio.pause();document.getElementById('mpPlayBtn').innerHTML='<i class="fas fa-play"></i>';isPlaying=false}
+  else{audio.play();document.getElementById('mpPlayBtn').innerHTML='<i class="fas fa-pause"></i>';isPlaying=true}
+}
+
+function nextTrack(){
+  if(tracks.length===0)return;
+  selectTrack((currentTrack+1)%tracks.length);
+}
+
+function prevTrack(){
+  if(tracks.length===0)return;
+  selectTrack((currentTrack-1+tracks.length)%tracks.length);
+}
+
+audio.addEventListener('timeupdate',()=>{
+  if(audio.duration){
+    document.getElementById('mpProgressBar').style.width = (audio.currentTime/audio.duration*100)+'%';
+  }
+});
+
+audio.addEventListener('ended',nextTrack);
+
+function setProgress(e){
+  if(!audio.duration)return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX-rect.left)/rect.width)*audio.duration;
+}
+
+function openSettings(){
+  document.getElementById('settingsModal').classList.add('open');
+  document.getElementById('nicknameInput').value = localStorage.getItem('yougame_nick')||'';
+  document.getElementById('nicknameInput').focus();
+  buildTrackList();
+}
+
+function closeSettings(){
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+function saveSettings(){
+  const nick = document.getElementById('nicknameInput').value.trim();
+  if(!nick) return;
+  localStorage.setItem('yougame_nick', nick);
+  closeSettings();
+}
+
+(function(){
+  const nick = localStorage.getItem('yougame_nick');
+  const splash = document.getElementById('splash');
+  if(nick){
+    document.getElementById('splashGreeting').textContent = 'Добро пожаловать, ' + nick + '!';
+    document.getElementById('splashSub').textContent = 'Приготовься к победе...';
+  } else {
+    document.getElementById('splashGreeting').textContent = 'Добро пожаловать!';
+    document.getElementById('splashSub').textContent = 'Настрой ник в меню справа сверху';
+  }
+  setTimeout(() => {
+    splash.classList.add('hide');
+    setTimeout(() => splash.style.display='none', 600);
+  }, 2500);
+})();
+
+function downloadClient(){
+  const btn=document.querySelector('.btn-dl');
+  btn.innerHTML='<span class="btn-circle"><i class="fas fa-spinner fa-spin"></i></span> Подготовка...';
+  btn.disabled=true;
+  setTimeout(()=>{
+    btn.innerHTML='<span class="btn-circle"><i class="fas fa-check"></i></span> Скачивание началось!';
+    setTimeout(()=>{
+      document.querySelectorAll('.btn-dl').forEach(b=>{b.innerHTML='<span class="btn-circle"><i class="fas fa-download"></i></span> Скачать YouGame Combat 2.4.1';b.disabled=false});
+    },3000);
+  },1200);
+}
+</script>
+</body>
+</html>

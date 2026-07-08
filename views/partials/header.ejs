@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouGame - Minecraft Клиенты</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="<%= user?.theme || 'glass' %>">
+  <nav class="navbar glass-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <i class="fas fa-cube"></i> YouGame
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link"><i class="fas fa-home"></i> Главная</a>
+        <% if (user) { %>
+          <a href="/downloads" class="nav-link"><i class="fas fa-download"></i> Мои загрузки</a>
+          <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Настройки</a>
+          <button class="nav-link btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+        <% } else { %>
+          <a href="/login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Войти</a>
+          <a href="/register" class="nav-link btn-register-nav"><i class="fas fa-user-plus"></i> Регистрация</a>
+        <% } %>
+      </div>
+      <button class="nav-toggle" id="navToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+  <main class="main-content">

@@ -1,0 +1,46 @@
+<%- include('partials/header') %>
+<div class="container settings-page">
+  <h1 class="page-title"><i class="fas fa-cog"></i> Настройки</h1>
+
+  <div class="settings-grid">
+    <div class="settings-card glass-card">
+      <h3><i class="fas fa-palette"></i> Тема оформления</h3>
+      <p class="settings-desc">Переключай между стеклянной и тёмной стеклянной темой</p>
+      <div class="theme-toggle-wrapper">
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle" <%= user.theme === 'dark-glass' ? 'checked' : '' %>>
+          <span class="theme-slider glass">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+          </span>
+        </label>
+        <span id="themeLabel"><%= user.theme === 'dark-glass' ? 'Тёмное стекло' : 'Стекло' %></span>
+      </div>
+    </div>
+
+    <div class="settings-card glass-card">
+      <h3><i class="fas fa-user"></i> Профиль</h3>
+      <div class="profile-info">
+        <p><strong>Логин:</strong> <span id="profileUsername"><%= user.username %></span></p>
+        <p><strong>Email:</strong> <span id="profileEmail"><%= user.email %></span></p>
+      </div>
+    </div>
+
+    <div class="settings-card glass-card">
+      <h3><i class="fas fa-lock"></i> Сменить пароль</h3>
+      <form id="passwordForm" class="auth-form">
+        <div class="form-group">
+          <label>Текущий пароль</label>
+          <input type="password" name="currentPassword" class="glass-input" placeholder="Введите текущий пароль" required>
+        </div>
+        <div class="form-group">
+          <label>Новый пароль</label>
+          <input type="password" name="newPassword" class="glass-input" placeholder="Минимум 6 символов" required>
+        </div>
+        <div id="passwordError" class="auth-error"></div>
+        <button type="submit" class="btn-primary glass-btn"><i class="fas fa-save"></i> Сохранить</button>
+      </form>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

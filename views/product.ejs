@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+<div class="container product-page">
+  <div class="product-detail glass-card">
+    <div class="product-detail-icon">
+      <i class="fas fa-cubes fa-5x"></i>
+    </div>
+    <div class="product-detail-body">
+      <h1 class="product-detail-title"><%= product.title %></h1>
+      <div class="product-detail-meta">
+        <span class="badge"><%= product.version %></span>
+        <span class="badge badge-<%= product.category %>"><%= product.category %></span>
+        <span><i class="fas fa-download"></i> <%= product.downloads %> загрузок</span>
+      </div>
+      <p class="product-detail-desc"><%= product.description %></p>
+      <div class="product-actions">
+        <% if (user) { %>
+          <button class="btn-primary glass-btn btn-download" data-product-id="<%= product.id %>">
+            <i class="fas fa-download"></i> Скачать
+          </button>
+        <% } else { %>
+          <a href="/login" class="btn-primary glass-btn">
+            <i class="fas fa-sign-in-alt"></i> Войдите чтобы скачать
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

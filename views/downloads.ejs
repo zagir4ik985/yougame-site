@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<div class="container downloads-page">
+  <h1 class="page-title"><i class="fas fa-download"></i> Мои загрузки</h1>
+
+  <% if (downloads.length === 0) { %>
+    <div class="empty-state glass-card">
+      <i class="fas fa-box-open fa-4x"></i>
+      <p>У вас пока нет загрузок</p>
+      <a href="/" class="btn-primary glass-btn">Перейти к клиентам</a>
+    </div>
+  <% } else { %>
+    <div class="downloads-list">
+      <% downloads.forEach(d => { %>
+        <div class="download-item glass-card">
+          <div class="download-item-icon">
+            <i class="fas fa-cubes fa-2x"></i>
+          </div>
+          <div class="download-item-body">
+            <h3><%= d.title %></h3>
+            <span class="badge"><%= d.version %></span>
+            <span class="download-date"><i class="far fa-clock"></i> <%= new Date(d.downloaded_at).toLocaleString('ru-RU') %></span>
+          </div>
+          <a href="/product/<%= d.id %>" class="btn-primary glass-btn btn-sm">
+            <i class="fas fa-eye"></i>
+          </a>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+<%- include('partials/footer') %>
