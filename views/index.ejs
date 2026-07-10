@@ -1,37 +1,166 @@
 <%- include('partials/header') %>
-<div class="hero glass-hero">
-  <h1 class="hero-title">Майнкрафт Клиенты</h1>
-  <p class="hero-subtitle">Скачивай лучшие сборки бесплатно</p>
-  <div class="hero-search glass-input-wrapper">
-    <i class="fas fa-search"></i>
-    <input type="text" id="searchInput" placeholder="Поиск клиентов..." class="glass-input">
-  </div>
-</div>
 
-<div class="container">
-  <div class="category-filters">
-    <button class="filter-btn active" data-category="all">Все</button>
-    <% categories.forEach(cat => { %>
-      <button class="filter-btn" data-category="<%= cat %>"><%= cat %></button>
-    <% }) %>
-  </div>
-
-  <div class="products-grid" id="productsGrid">
-    <% products.forEach(product => { %>
-      <a href="/product/<%= product.id %>" class="product-card glass-card">
-        <div class="product-card-img">
-          <i class="fas fa-cubes"></i>
-        </div>
-        <div class="product-card-body">
-          <h3 class="product-card-title"><%= product.title %></h3>
-          <p class="product-card-desc"><%= product.description?.substring(0, 80) %><%= product.description?.length > 80 ? '...' : '' %></p>
-          <div class="product-card-meta">
-            <span class="badge"><%= product.version %></span>
-            <span class="download-count"><i class="fas fa-download"></i> <%= product.downloads %></span>
-          </div>
-        </div>
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">1.21.4 Fabric</div>
+    <h1 class="hero-title">
+      <span class="hero-title-accent">zagaDLC</span><br>
+      Minecraft Клиент
+    </h1>
+    <p class="hero-subtitle">
+      Мощный мод-клиент для PvP. 30+ модулей, стабильная работа, обход античита. Скачай бесплатно.
+    </p>
+    <div class="hero-actions">
+      <a href="/product/1" class="btn-buy">
+        <i class="fas fa-download"></i> Скачать бесплатно
       </a>
-    <% }) %>
+      <a href="#features" class="btn-secondary">
+        <i class="fas fa-arrow-down"></i> Узнать больше
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-value">30+</div>
+    <div class="stat-label">Модулей</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">1.21.4</div>
+    <div class="stat-label">Версия MC</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">60+</div>
+    <div class="stat-label">FPS Boost</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">24/7</div>
+    <div class="stat-label">Поддержка</div>
   </div>
 </div>
+
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Возможности</div>
+      <h2 class="section-title">Что внутри</h2>
+      <p class="section-subtitle">Всё что нужно для доминирования на серверах</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-green">
+          <i class="fas fa-crosshairs"></i>
+        </div>
+        <h3>Combat модули</h3>
+        <p>TriggerBot, KillAura, Criticals, Velocity, AutoPot, AimAssist и другие PvP-модули.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-purple">
+          <i class="fas fa-eye"></i>
+        </div>
+        <h3>Visual</h3>
+        <p>ESP, Tracers, Nametags, Fullbright, View Model, HUD кастомизация и оверлеи.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-blue">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3>Movement</h3>
+        <p>Fly, Speed, Sprint, NoFall, Step, Scaffold — все модули движения.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-green">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Обход античита</h3>
+        <p>Встроенные байпасы для популярных античитов: Vulcan, Grim, Matrix, Intave.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-purple">
+          <i class="fas fa-cog"></i>
+        </div>
+        <h3>GuiMove</h3>
+        <p>Движение в инвентаре с пакетным байпасом. Полный контроль даже в меню.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-blue">
+          <i class="fas fa-palette"></i>
+        </div>
+        <h3>Кастомизация</h3>
+        <p>Настройка каждого модуля, цветов, клавиш и поведения под свой стиль игры.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="servers" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Серверы</div>
+      <h2 class="section-title">Где играют</h2>
+      <p class="section-subtitle">Популярные серверы с активным онлайном</p>
+    </div>
+
+    <div class="servers-grid">
+      <div class="server-card">
+        <div class="server-icon"><i class="fas fa-server"></i></div>
+        <div class="server-info">
+          <h3>HypeTrain</h3>
+          <div class="server-online">1 200 онлайн</div>
+        </div>
+      </div>
+
+      <div class="server-card">
+        <div class="server-icon"><i class="fas fa-server"></i></div>
+        <div class="server-info">
+          <h3>Funtime</h3>
+          <div class="server-online">850 онлайн</div>
+        </div>
+      </div>
+
+      <div class="server-card">
+        <div class="server-icon"><i class="fas fa-server"></i></div>
+        <div class="server-info">
+          <h3>VimeWorld</h3>
+          <div class="server-online">2 400 онлайн</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="buy">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Скачать</div>
+      <h2 class="section-title">Начни сейчас</h2>
+      <p class="section-subtitle">Бесплатно, без подписок</p>
+    </div>
+
+    <div class="pricing-card">
+      <div class="pricing-label">Бесплатно</div>
+      <div class="pricing-price">$0 <span>/ навсегда</span></div>
+      <p class="pricing-desc">Полный доступ ко всем модулям без ограничений</p>
+      <ul class="pricing-features">
+        <li><i class="fas fa-check"></i> 30+ боевых модулей</li>
+        <li><i class="fas fa-check"></i> Visual & HUD настройки</li>
+        <li><i class="fas fa-check"></i> Movement модули</li>
+        <li><i class="fas fa-check"></i> Обход античитов</li>
+        <li><i class="fas fa-check"></i> Бесплатные обновления</li>
+        <li><i class="fas fa-check"></i> Поддержка 24/7</li>
+      </ul>
+      <a href="/product/1" class="pricing-btn">
+        <i class="fas fa-download"></i> Скачать zagaDLC
+      </a>
+    </div>
+  </div>
+</section>
+
 <%- include('partials/footer') %>

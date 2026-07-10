@@ -1,29 +1,47 @@
 <%- include('partials/header') %>
-<div class="container product-page">
-  <div class="product-detail glass-card">
-    <div class="product-detail-icon">
-      <i class="fas fa-cubes fa-5x"></i>
-    </div>
-    <div class="product-detail-body">
-      <h1 class="product-detail-title"><%= product.title %></h1>
-      <div class="product-detail-meta">
-        <span class="badge"><%= product.version %></span>
-        <span class="badge badge-<%= product.category %>"><%= product.category %></span>
-        <span><i class="fas fa-download"></i> <%= product.downloads %> загрузок</span>
+
+<section class="product-page">
+  <div class="container">
+    <div class="product-hero">
+      <div class="product-image">
+        <img src="/images/yougame.png" alt="zagaDLC" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-cube\'></i>'">
       </div>
-      <p class="product-detail-desc"><%= product.description %></p>
-      <div class="product-actions">
-        <% if (user) { %>
-          <button class="btn-primary glass-btn btn-download" data-product-id="<%= product.id %>">
-            <i class="fas fa-download"></i> Скачать
-          </button>
-        <% } else { %>
-          <a href="/login" class="btn-primary glass-btn">
-            <i class="fas fa-sign-in-alt"></i> Войдите чтобы скачать
-          </a>
-        <% } %>
+      <div class="product-info">
+        <h1><%= product.title %></h1>
+        <div class="product-meta">
+          <span class="product-tag"><%= product.version %></span>
+          <span class="product-tag" style="background:rgba(124,92,252,0.15);color:var(--accent-secondary);border-color:rgba(124,92,252,0.2);">Fabric</span>
+          <span class="product-downloads"><i class="fas fa-download"></i> <%= product.downloads %> загрузок</span>
+        </div>
+        <p class="product-description"><%= product.description %></p>
+
+        <div class="product-features-list">
+          <div class="product-feature-item"><i class="fas fa-check"></i> TriggerBot</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> KillAura</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> ESP / Tracers</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> Criticals</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> Fly / Speed</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> GuiMove</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> View Model</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> Fullbright</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> Scaffold</div>
+          <div class="product-feature-item"><i class="fas fa-check"></i> Velocity</div>
+        </div>
+
+        <div class="hero-actions" style="justify-content:flex-start;">
+          <% if (user) { %>
+            <button class="btn-buy btn-download" data-product-id="<%= product.id %>">
+              <i class="fas fa-download"></i> Скачать бесплатно
+            </button>
+          <% } else { %>
+            <a href="/login" class="btn-buy">
+              <i class="fas fa-sign-in-alt"></i> Войдите чтобы скачать
+            </a>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
 <%- include('partials/footer') %>
